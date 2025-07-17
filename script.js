@@ -1,20 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     
-    const firebaseConfig = {
-
-  apiKey: "AIzaSyALYeD_s88Ng7X7sAb4LTPn68VGQwW2td8",
-
-  authDomain: "recipebook-acdaf.firebaseapp.com",
-
-  projectId: "recipebook-acdaf",
-
-  storageBucket: "recipebook-acdaf.firebasestorage.app",
-
-  messagingSenderId: "421877291878",
-
-  appId: "1:421877291878:web:943e3e5c4293487f0346a7"
-
-};
+    
 
 
     // Initialize Firebase

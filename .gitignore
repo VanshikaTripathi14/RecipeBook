@@ -1,0 +1,5 @@
+# Ignore the file containing Firebase API keys
+firebase.js
+
+# Ignore Node.js modules folder, if you ever use it
+node_modules/

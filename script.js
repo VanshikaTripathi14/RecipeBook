@@ -1,6 +1,5 @@
 // Recipe Book Application
-// This app allows users to add, view, search, edit, and delete recipes
-// All data is stored in the browser's localStorage
+
 
 document.addEventListener('DOMContentLoaded', function() {
     // DOM Elements
@@ -19,13 +18,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const modalContent = document.getElementById('modalContent');
     const closeModal = document.querySelector('.close');
 
-    // Line 20: New DOM elements for confirmation modal
+    
     const confirmationModal = document.getElementById('confirmationModal');
     const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
     const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
     const closeConfirmModal = document.querySelector('.close-confirm');
 
-    // Line 25: Variable to store the ID of the recipe being edited or deleted
+    
     let editingRecipeId = null;
     let recipeIdToDelete = null;
 
@@ -38,14 +37,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.target === recipeModal) {
             recipeModal.style.display = 'none';
         }
-        // Line 36: Close confirmation modal if clicked outside
+        
         if (e.target === confirmationModal) {
             confirmationModal.style.display = 'none';
         }
     });
     recipeImageInput.addEventListener('change', handleImageUpload);
 
-    // Line 43: Event listeners for confirmation modal buttons
+    
     confirmDeleteBtn.addEventListener('click', confirmDeletion);
     cancelDeleteBtn.addEventListener('click', () => confirmationModal.style.display = 'none');
     closeConfirmModal.addEventListener('click', () => confirmationModal.style.display = 'none');
@@ -54,13 +53,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load recipes when page loads
     loadRecipes();
 
-    // Line 52: Renamed from handleAddRecipe to handleSaveRecipe
+    
     function handleSaveRecipe(e) {
         e.preventDefault();
         
         // Validate form
         if (!recipeNameInput.value.trim() || !recipeIngredientsInput.value.trim() || !recipeStepsInput.value.trim()) {
-            // Line 58: Replaced alert with console.error as alerts are not allowed
+            
             console.error('Please fill in all required fields');
             // In a real app, you'd show a custom message box here
             return;
@@ -75,10 +74,10 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         if (editingRecipeId) {
-            // Line 72: Update existing recipe
+            
             updateRecipe(editingRecipeId, recipe);
         } else {
-            // Line 75: Add new recipe
+            
             recipe.id = Date.now().toString(); // Assign new ID only for new recipes
             saveRecipe(recipe);
         }
@@ -86,10 +85,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // Reset form and UI state
         addRecipeForm.reset();
         imagePreview.innerHTML = '';
-        editingRecipeId = null; // Clear editing state
-        saveRecipeBtn.textContent = 'Add Recipe'; // Reset button text
+        editingRecipeId = null; 
+        saveRecipeBtn.textContent = 'Add Recipe'; 
         
-        // Reload recipes
+        
         loadRecipes();
     }
 
@@ -98,9 +97,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!file) return;
 
         if (!file.type.match('image.*')) {
-            // Line 93: Replaced alert with console.error
+            
             console.error('Please select an image file');
-            // In a real app, you'd show a custom message box here
+           
             return;
         }
 
@@ -117,12 +116,12 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('recipes', JSON.stringify(recipes));
     }
 
-    // Line 112: New function to update a recipe
+    
     function updateRecipe(id, updatedRecipe) {
         let recipes = getRecipes();
         const index = recipes.findIndex(r => r.id === id);
         if (index !== -1) {
-            recipes[index] = { ...recipes[index], ...updatedRecipe }; // Merge existing with updated data
+            recipes[index] = { ...recipes[index], ...updatedRecipe }; 
             localStorage.setItem('recipes', JSON.stringify(recipes));
         }
     }
@@ -159,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </button>
                 </div>
             `;
-            // Line 159: Changed click listener to viewRecipe only, actions handled by new buttons
+            
             recipeCard.querySelector('.recipe-card-content').addEventListener('click', () => viewRecipe(recipe.id));
             recipeCard.querySelector('.recipe-card-actions .edit').addEventListener('click', (e) => handleEditRecipe(e, recipe.id));
             recipeCard.querySelector('.recipe-card-actions .delete').addEventListener('click', (e) => handleDeleteClick(e, recipe.id));
@@ -215,14 +214,14 @@ document.addEventListener('DOMContentLoaded', function() {
         loadRecipes();
     }
 
-    // Line 213: New function to handle edit button click
+    
     function handleEditRecipe(e, recipeId) {
-        e.stopPropagation(); // Prevent recipe card click event from firing
+        e.stopPropagation(); 
         const recipes = getRecipes();
         const recipe = recipes.find(r => r.id === recipeId);
         if (!recipe) return;
 
-        // Populate the form with recipe data
+        
         recipeNameInput.value = recipe.name;
         recipeIngredientsInput.value = recipe.ingredients.join('\n');
         recipeStepsInput.value = recipe.steps.join('\n');
@@ -232,32 +231,32 @@ document.addEventListener('DOMContentLoaded', function() {
             imagePreview.innerHTML = '';
         }
 
-        // Set editing state
+        
         editingRecipeId = recipeId;
-        saveRecipeBtn.textContent = 'Update Recipe'; // Change button text
+        saveRecipeBtn.textContent = 'Update Recipe'; 
 
-        // Scroll to the form
+        
         addRecipeForm.scrollIntoView({ behavior: 'smooth' });
     }
 
-    // Line 239: New function to handle delete button click
+    
     function handleDeleteClick(e, recipeId) {
-        e.stopPropagation(); // Prevent recipe card click event from firing
-        recipeIdToDelete = recipeId; // Store the ID of the recipe to be deleted
-        confirmationModal.style.display = 'block'; // Show the confirmation modal
+        e.stopPropagation(); 
+        recipeIdToDelete = recipeId; 
+        confirmationModal.style.display = 'block'; 
     }
 
-    // Line 246: New function to confirm deletion
+    
     function confirmDeletion() {
         if (recipeIdToDelete) {
             deleteRecipe(recipeIdToDelete);
-            confirmationModal.style.display = 'none'; // Hide the confirmation modal
-            recipeIdToDelete = null; // Clear the stored ID
-            loadRecipes(); // Reload recipes after deletion
+            confirmationModal.style.display = 'none'; 
+            recipeIdToDelete = null; 
+            loadRecipes(); 
         }
     }
 
-    // Line 255: New function to delete a recipe
+    
     function deleteRecipe(id) {
         let recipes = getRecipes();
         recipes = recipes.filter(r => r.id !== id);

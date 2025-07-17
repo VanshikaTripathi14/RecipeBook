@@ -2,8 +2,6 @@
 
 A responsive web-based Recipe Book that allows users to store, view, and search recipes locally in their browser. This project is built with vanilla HTML, CSS, and JavaScript, focusing on core web technologies and local browser storage.
 
-![Recipe Book Demo](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbm9oNG1hNTNodml5NjB2a29xNmlwa2YwYWVqdnNtb3c4ZWU3NGRqMyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/L1R1tvI9dpsA3mcD3s/giphy.gif)
-
 ---
 
 ## ✨ Features
@@ -52,10 +50,11 @@ No server or special dependencies are needed! Just follow these simple steps:
 
 The project is organized with a simple and clean file structure:
 
-recipe-book/
+'''recipe-book/
 ├── index.html  # Main HTML file for the application structure
 ├── style.css   # All styles for the application
 └── script.js   # Core JavaScript logic and functionality
+'''
 
 
 ---

@@ -50,12 +50,12 @@ No server or special dependencies are needed! Just follow these simple steps:
 
 The project is organized with a simple and clean file structure:
 
-'''
+```
 recipe-book/
 ├── index.html  # Main HTML file for the application structure
 ├── style.css   # All styles for the application
 └── script.js   # Core JavaScript logic and functionality
-'''
+```
 
 
 ---

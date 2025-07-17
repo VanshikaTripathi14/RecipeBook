@@ -1,13 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
     
-    
-
-
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore(); // Firestore Database
-    const storage = firebase.storage(); // Firebase Storage for images
-
     // --- 2. DOM Elements ---
     const getElem = (id) => document.getElementById(id);
     const addRecipeForm = getElem('addRecipeForm');

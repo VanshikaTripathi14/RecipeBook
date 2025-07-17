@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     
+    // Firebase is now initialized in firebase.js
+    // We can directly use the 'db' and 'storage' variables.
+
     // --- 2. DOM Elements ---
     const getElem = (id) => document.getElementById(id);
     const addRecipeForm = getElem('addRecipeForm');
@@ -175,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error("Error deleting recipe: ", error);
             showToast("Failed to delete recipe.", 'error');
         } finally {
-            confirmationModal.style.display = 'none';
+            if (confirmationModal) confirmationModal.style.display = 'none';
             recipeIdToDelete = null;
         }
     }
@@ -186,8 +189,8 @@ document.addEventListener('DOMContentLoaded', function() {
      * Fetches all recipes from Firestore, caches them, and triggers rendering.
      */
     async function fetchAndRenderRecipes() {
-        loader.classList.add('show');
-        recipesContainer.innerHTML = '';
+        if(loader) loader.classList.add('show');
+        if(recipesContainer) recipesContainer.innerHTML = '';
         try {
             const snapshot = await db.collection('recipes').orderBy('createdAt', 'desc').get();
             allRecipesCache = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -196,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error("Error fetching recipes: ", error);
             showToast("Could not load recipes from the cloud.", "error");
         } finally {
-            loader.classList.remove('show');
+            if(loader) loader.classList.remove('show');
         }
     }
 
@@ -205,6 +208,7 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param {Array} recipes The array of recipe objects to display.
      */
     function renderRecipes(recipes) {
+        if(!recipesContainer) return;
         recipesContainer.innerHTML = '';
         const searchTerm = searchInput.value.trim().toLowerCase();
         
@@ -271,7 +275,7 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function viewRecipeDetails(recipeId) {
         const recipe = allRecipesCache.find(r => r.id === recipeId);
-        if (!recipe) return;
+        if (!recipe || !modalContent) return;
 
         const ingredientsList = recipe.ingredients ? recipe.ingredients.map(ing => `<li>${ing}</li>`).join('') : '<li>No ingredients listed.</li>';
         const stepsList = recipe.steps ? recipe.steps.map(step => `<li>${step}</li>`).join('') : '<li>No steps listed.</li>';
@@ -288,7 +292,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <ol>${stepsList}</ol>
             </div>
         `;
-        recipeModal.style.display = 'block';
+        if (recipeModal) recipeModal.style.display = 'block';
     }
     
     // --- 7. Event Handlers ---
@@ -304,7 +308,7 @@ document.addEventListener('DOMContentLoaded', function() {
             populateFormForEdit(recipeId);
         } else if (target.closest('.delete')) {
             recipeIdToDelete = recipeId;
-            confirmationModal.style.display = 'block';
+            if (confirmationModal) confirmationModal.style.display = 'block';
         } else {
             viewRecipeDetails(recipeId);
         }
@@ -315,19 +319,21 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!file || !file.type.startsWith('image/')) return;
 
         const reader = new FileReader();
-        reader.onload = e => imagePreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+        reader.onload = e => {
+            if (imagePreview) imagePreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+        };
         reader.onerror = () => showToast('Failed to read image.', 'error');
         reader.readAsDataURL(file);
     }
     
     function handleClearSearch() {
-        searchInput.value = '';
+        if (searchInput) searchInput.value = '';
         renderRecipes(allRecipesCache); // Render from cache, no re-fetch needed
     }
     
     function handleModalClose() {
-        recipeModal.style.display = 'none';
-        confirmationModal.style.display = 'none';
+        if (recipeModal) recipeModal.style.display = 'none';
+        if (confirmationModal) confirmationModal.style.display = 'none';
     }
 
     function handleKeyboard(e) {
@@ -336,25 +342,42 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // --- 8. Event Listeners ---
-    addRecipeForm.addEventListener('submit', handleSaveRecipe);
-    searchInput.addEventListener('input', () => renderRecipes(allRecipesCache));
-    clearSearchBtn.addEventListener('click', handleClearSearch);
-    recipesContainer.addEventListener('click', handleRecipesContainerClick);
-    recipeImageInput.addEventListener('change', handleImagePreview);
+    // --- 8. Event Listeners (FIXED) ---
+    // This section is now more robust and checks if an element exists before adding a listener.
+    if (addRecipeForm) addRecipeForm.addEventListener('submit', handleSaveRecipe);
+    if (searchInput) searchInput.addEventListener('input', () => renderRecipes(allRecipesCache));
+    if (clearSearchBtn) clearSearchBtn.addEventListener('click', handleClearSearch);
+    if (recipesContainer) recipesContainer.addEventListener('click', handleRecipesContainerClick);
+    if (recipeImageInput) recipeImageInput.addEventListener('change', handleImagePreview);
     
     // Modal close listeners
-    recipeModal.querySelector('.close').addEventListener('click', handleModalClose);
-    confirmationModal.querySelector('.close-confirm').addEventListener('click', handleModalClose);
-    cancelDeleteBtn.addEventListener('click', handleModalClose);
+    const recipeModalCloseBtn = document.querySelector('#recipeModal .close');
+    if (recipeModalCloseBtn) {
+        recipeModalCloseBtn.addEventListener('click', handleModalClose);
+    }
+
+    const confirmModalCloseBtn = document.querySelector('#confirmationModal .close-confirm');
+    if (confirmModalCloseBtn) {
+        confirmModalCloseBtn.addEventListener('click', handleModalClose);
+    }
+    
+    if (cancelDeleteBtn) {
+        cancelDeleteBtn.addEventListener('click', handleModalClose);
+    }
+    
     window.addEventListener('click', e => {
         if (e.target === recipeModal || e.target === confirmationModal) {
             handleModalClose();
         }
     });
     
-    confirmDeleteBtn.addEventListener('click', confirmDeletion);
-    cancelEditBtn.addEventListener('click', resetForm);
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', confirmDeletion);
+    }
+
+    if (cancelEditBtn) {
+        cancelEditBtn.addEventListener('click', resetForm);
+    }
 
     // Global listeners
     window.addEventListener('keydown', handleKeyboard);

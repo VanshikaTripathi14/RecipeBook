@@ -8,14 +8,97 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+    <!-- The content for the application was missing from this container -->
     <div class="container">
+        <header>
+            <h1>My Recipe Book</h1>
+        </header>
+
+        <section class="search-section">
+            <h2>Search Recipes</h2>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Live search by name or ingredient...">
+                <button class="btn btn-secondary" id="clearSearchBtn">Clear</button>
+            </div>
+        </section>
+
+        <section class="recipe-list">
+            <h2>Your Recipes</h2>
+            <div class="recipes-container" id="recipesContainer">
+                <!-- Recipes will be dynamically loaded here -->
+            </div>
+            <div class="loader" id="loader"></div>
+        </section>
+
+        <section class="recipe-form">
+            <h2 id="form-title">Add New Recipe</h2>
+            <form id="addRecipeForm" novalidate>
+                <div class="form-group">
+                    <label for="recipeName">Recipe Name:</label>
+                    <input type="text" id="recipeName" required>
+                    <div class="error-message" id="recipeNameError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="recipeIngredients">Ingredients (one per line):</label>
+                    <textarea id="recipeIngredients" required></textarea>
+                    <div class="error-message" id="recipeIngredientsError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="recipeSteps">Preparation Steps (one per line):</label>
+                    <textarea id="recipeSteps" required></textarea>
+                    <div class="error-message" id="recipeStepsError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="recipeImage">Recipe Image:</label>
+                    <input type="file" id="recipeImage" accept="image/*">
+                    <div class="image-preview" id="imagePreview">
+                        <span>+ Add Image</span>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn" id="saveRecipeBtn">Add Recipe</button>
+                    <button type="button" class="btn btn-secondary" id="cancelEditBtn" style="display: none;">Cancel Edit</button>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <!-- Modals -->
+    <div id="recipeModal" class="modal">
+        <div class="modal-content">
+            <span class="close" title="Close" aria-label="Close">&times;</span>
+            <div id="modalContent"></div>
         </div>
+    </div>
+
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content small-modal">
+            <span class="close-confirm" title="Close" aria-label="Close">&times;</span>
+            <div class="modal-header">
+                <h3>Confirm Deletion</h3>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this recipe?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+                <button class="btn btn-secondary" id="cancelDeleteBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer"></div>
+
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
 
+    <!-- Your new, secret firebase config file -->
     <script src="firebase.js"></script> 
     
+    <!-- Your main app logic -->
     <script src="script.js"></script>
 </body>
 </html>
